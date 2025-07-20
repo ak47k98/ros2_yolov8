@@ -29,11 +29,17 @@ class AIDetector(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('image_topic', 'raw_images'),
                 ('model_path1', '/home/ak47k98/PycharmProjects/ros2_v8/best_circle.pt'),
                 ('model_path2', '/home/ak47k98/PycharmProjects/ros2_v8/best_H.pt'),
                 ('conf_threshold', 0.6),
                 ('device', 'cuda:0'),
+                #('image_topic', 'image_topic'),  # 图像订阅话题
+                ('image_topic', 'raw_images'),  # 图像订阅话题
+                ('model_path1', 'best_old_circle.pt'),  # 模型路径1
+                ('model_path2', 'best_H.pt'),# 模型路径2
+                ('conf_threshold', 0.5),  # 置信度阈值
+                ('device', 'cuda:0'),  # 推理设备
+                ('frame_size', [1920, 1080]),  # [宽, 高]
             ]
         )
 
