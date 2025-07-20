@@ -69,8 +69,8 @@ class AIDetector(Node):
         self.get_logger().info("Subscribing to '/visualization_targets' for prediction circles.")
 
         # 圆心相关初始化
-        self.center_1x, self.center_1y = 710, 450
-        self.center_2x, self.center_2y = 630, 450
+        self.center_1x, self.center_1y = 700, 450
+        self.center_2x, self.center_2y = 620, 450
         self.radius = 35
         self.prev_state = 0
         self.stay_start_time = None
@@ -147,13 +147,17 @@ class AIDetector(Node):
         )
 
     def _try_init_servo_controller(self):
-        try:
-            self.servo_ctrl = ServoController(self, namespace="/mavros/")
-            self.servo_ready = True
-            self.get_logger().info("舵机控制器初始化完成")
-        except Exception as e:
-            self.get_logger().warn(f"MAVROS 未启动，舵机控制不可用：{e}")
-            self.servo_ready = False
+                # 尝试初始化舵机控制器
+                try:
+                    # 创建舵机控制器实例，使用命名空间 "/mavros/"
+                    self.servo_ctrl = ServoController(self, namespace="/mavros/")
+                    self.servo_ready = True
+                    # 日志记录：舵机控制器初始化成功
+                    self.get_logger().info("舵机控制器初始化完成")
+                except Exception as e:
+                    # 如果初始化失败，记录警告日志并设置舵机不可用状态
+                    self.get_logger().warn(f"MAVROS 未启动，舵机控制不可用：{e}")
+                    self.servo_ready = False
     def _ros_image_callback(self, msg: Image):
         try:
             frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
@@ -196,10 +200,11 @@ class AIDetector(Node):
         self.det2d_pub = self.create_publisher(Detection2DArray, 'detection2d_array', 10)
         self.servo_pub = self.create_publisher(Int32, 'servo_state', 10)
 
-    def _init_threads(self):
-        self.running = True
-        self.cap_thread = threading.Thread(target=self._capture_loop)
-        self.cap_thread.start()
+def _init_threads(self):
+    # 初始化线程，用于捕获视频帧
+    self.running = True
+    self.cap_thread = threading.Thread(target=self._capture_loop)  # 创建线程并指定捕获循环函数
+    self.cap_thread.start()  # 启动线程
 
     def _capture_loop(self):
         while self.running:
@@ -430,6 +435,9 @@ class AIDetector(Node):
                                         self.get_logger().warn(f"[Servo] MAVROS未启动，跳过 Servo{servo_id} 投弹动作")
                                 except Exception as e:
                                     self.get_logger().error(f"[Servo] 投弹执行出错: {e}")
+                                if self.sum_servo_value == 2:
+                                    self.get_logger().info("已完成左右舵投弹")
+                                    self.last_servo_value = 3
                             elif self.last_servo_value != 2 and self.sum_servo_value != 2 and d2x * d2x + d2y * d2y <= self.radius * self.radius:
                                 self.get_logger().info("左舵投弹！！！")
                                 servo_id = 12
@@ -443,6 +451,10 @@ class AIDetector(Node):
                                         self.get_logger().warn(f"[Servo] MAVROS未启动，跳过 Servo{servo_id} 投弹动作")
                                 except Exception as e:
                                     self.get_logger().error(f"[Servo] 投弹执行出错: {e}")
+
+                                if self.sum_servo_value == 2:
+                                    self.get_logger().info("已完成左右舵投弹")
+                                    self.last_servo_value = 3
                             elif self.sum_servo_value == 2:
                                 self.last_servo_value = 3
                                 self.get_logger().info("已完成前后舵投弹，servo=3 发送完成")
