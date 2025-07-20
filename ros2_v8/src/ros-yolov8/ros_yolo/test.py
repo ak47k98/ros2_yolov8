@@ -18,9 +18,8 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Header
 from visualization_msgs.msg import MarkerArray, Marker
 
-
 class AIDetector(Node):
-    """智能检测节点（从话题订阅图像）"""
+    """智能检测节点（含摄像头直读+原始图像发布）"""
 
     def __init__(self):
         super().__init__('detector')
@@ -34,18 +33,27 @@ class AIDetector(Node):
                 ('model_path2', '/home/ak47k98/PycharmProjects/ros2_v8/best_H.pt'),
                 ('conf_threshold', 0.6),
                 ('device', 'cuda:0'),
+                ('frame_size', [1920, 1080]),
+                ('publish_raw', True),
             ]
         )
 
-        # ========== 初始化 ==========
-        self.bridge = CvBridge()  # OpenCV/ROS图像转换工具
+        # ========== 硬件初始化 ==========
+        self._init_camera()
+        self.bridge = CvBridge()        # OpenCV/ROS图像转换工具
+
+
+        # ========== 模型初始化 ==========
         self._init_model()
-        self._init_class_mapping()
+
+        # ========== 类别映射初始化 ==========
+        self._init_class_mapping()  # OpenCV/ROS图像转换工具
 
         # ========== ROS接口 ==========
         self._init_publishers()
-        self._init_subscribers()  # 激活订阅器
         self._init_threads()
+
+        self._init_publishers()
 
         # MODIFICATION: Initialize a list to store (hold) visualization targets
         self.visualization_targets = []
@@ -59,8 +67,9 @@ class AIDetector(Node):
         )
         self.get_logger().info("Subscribing to '/visualization_targets' for prediction circles.")
 
+
         # 圆心相关初始化
-        self.center_1x, self.center_1y = 710, 450  # 1280,720
+        self.center_1x, self.center_1y = 710, 450   #1280,720
         self.center_2x, self.center_2y = 630, 450
         self.radius = 35
 
@@ -76,7 +85,7 @@ class AIDetector(Node):
 
         self._load_camera_calibration('rgb_camera_calib_1.npz')
 
-        self.current_state = 0  # 初始化飞控状态
+        self.current_state = 0  #初始化飞控状态
         self.state_sub = self.create_subscription(
             Int32,
             'current_state',
@@ -127,17 +136,18 @@ class AIDetector(Node):
         det2d.bbox.size_x = float(w)
         det2d.bbox.size_y = float(h)
         hypo = ObjectHypothesisWithPose()
-        if cls_id == 0:
+        if cls_id==0:
             hypo.hypothesis.class_id = str('circle')
-        elif cls_id == 2:
+        elif cls_id==2:
             hypo.hypothesis.class_id = str('h')
-        elif cls_id == 1:
+        elif cls_id==1:
             hypo.hypothesis.class_id = str('stuffed')
         else:
             hypo.hypothesis.class_id = str(cls_id)
         hypo.hypothesis.score = conf
         det2d.results = [hypo]
         return det2d
+
 
     def _init_subscribers(self):
         """初始化图像订阅器"""
@@ -147,23 +157,11 @@ class AIDetector(Node):
         self.image_sub = self.create_subscription(
             Image,
             image_topic,
-            self.image_callback,  # Callback to handle image
+            self.image_callback,
             qos
         )
-        self.get_logger().info(f"Subscribing to image topic: '{image_topic}'")
-
-    def image_callback(self, msg: Image):
-        """Callback for handling incoming image messages."""
-        try:
-            # Convert ROS Image message to OpenCV image
-            frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            with self.frame_lock:
-                self.latest_frame = frame
-        except Exception as e:
-            self.get_logger().error(f"Failed to convert image: {str(e)}")
-
     def _state_callback(self, msg: Int32):
-        # 飞控状态订阅回调（控制业务主流程分支）
+        #飞控状态订阅回调（控制业务主流程分支）
         self.current_state = msg.data
         if self.current_state != self.prev_state:
             self.get_logger().info(f"接收到状态更新: {self.current_state}", throttle_duration_sec=2.0)
@@ -177,7 +175,7 @@ class AIDetector(Node):
             self.last_h_detected_in_doland = None
 
     def _init_model(self):
-        # 加载YOLOv8模型
+        #加载YOLOv8模型
         device = self.get_parameter('device').value
         try:
             model_path1 = self.get_parameter('model_path1').value
@@ -193,7 +191,7 @@ class AIDetector(Node):
             raise
 
     def _load_camera_calibration(self, path):
-        # 加载摄像头标定参数（畸变校正用）
+        #加载摄像头标定参数（畸变校正用）
         try:
             calib_data = np.load(path)
             self.camera_matrix = calib_data['camera_matrix']
@@ -205,16 +203,25 @@ class AIDetector(Node):
             self.dist_coeffs = None
 
     def _init_publishers(self):
-        # 初始化ROS话题发布器
+        #初始化ROS话题发布器
+        qos = QoSProfile(
+            depth=1,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT
+        )
+        if self.get_parameter('publish_raw').value:
+            self.raw_pub = self.create_publisher(Image, 'raw_images', qos)
+        else:
+            self.raw_pub = None
         self.det2d_pub = self.create_publisher(Detection2DArray, 'detection2d_array', 10)
         self.servo_pub = self.create_publisher(Int32, 'servo_state', 10)
 
     def _init_threads(self):
-        # 启动AI推理线程
+        #启动图像采集与AI推理线程
         self.latest_frame = None
         self.frame_lock = threading.Lock()
         self.running = True
-        # The capture thread is no longer needed
+        self.cap_thread = threading.Thread(target=self._capture_loop)
+        self.cap_thread.start()
         self.proc_thread = threading.Thread(target=self._process_loop)
         self.proc_thread.start()
 
@@ -276,21 +283,33 @@ class AIDetector(Node):
 
         except Exception as e:
             self.get_logger().error(f"绘制可视化目标ID {target.get('id', 'N/A')} 时失败: {e}")
-
-    def _range_callback(self, msg: Range):  # 激光雷达距离回调
+    def _range_callback(self, msg: Range):# 激光雷达距离回调
         self.rangefinder_height = msg.range
 
-    def _process_loop(self):
-        # AI推理处理主循环（多线程，核心业务入口）
+    def _capture_loop(self):# 摄像头图像采集循环
         while self.running:
+            ret, frame = self.cap.read()
+            if not ret:
+                self.get_logger().warn("视频帧获取失败", throttle_duration_sec=1)
+                continue
+            with self.frame_lock:
+                self.latest_frame = frame
+            if self.raw_pub:
+                try:
+                    msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+                    self.raw_pub.publish(msg)
+                except Exception as e:
+                    self.get_logger().error(f"图像发布失败: {str(e)}")
+
+    def _process_loop(self):
+        #AI推理处理主循环（多线程，核心业务入口）
+        while self.running:
+            start_time = time.time()
             with self.frame_lock:
                 frame = self.latest_frame.copy() if self.latest_frame is not None else None
-
             if frame is None:
-                time.sleep(0.01)  # Wait for the first frame from the callback
+                time.sleep(0.0001)
                 continue
-
-            start_time = time.time()
             if self.camera_matrix is not None and self.dist_coeffs is not None:
                 frame = cv2.remap(frame, self.map1, self.map2, interpolation=cv2.INTER_LINEAR)
             conf_thres = self.get_parameter('conf_threshold').value
@@ -378,6 +397,7 @@ class AIDetector(Node):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
                 cv2.circle(frame, (cx, cy), 5, color, -1)
                 idx += 1
+
 
         # 侦查状态
         if self.current_state == 3:
@@ -556,10 +576,11 @@ class AIDetector(Node):
             self.servo_pub.publish(Int32(data=self.last_servo_value))
             return frame
 
-    def destroy_node(self):  # ROS节点销毁，关闭线程与窗口
+    def destroy_node(self):#ROS节点销毁，关闭线程与窗口
         self.running = False
-        if hasattr(self, 'proc_thread'):
-            self.proc_thread.join()
+        self.cap_thread.join()
+        self.proc_thread.join()
+        self.cap.release()
         cv2.destroyAllWindows()
         super().destroy_node()
 
