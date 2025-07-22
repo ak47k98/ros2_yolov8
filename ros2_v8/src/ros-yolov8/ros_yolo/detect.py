@@ -124,12 +124,6 @@ class AIDetector(Node):
         # 舵机控制
 
 
-        #try:
-            #self.servo_ctrl = ServoController(self, namespace="/mavros/")
-            #self.servo_ready = True
-        #except Exception as e:
-            #self.get_logger().warn(f"MAVROS 未启动，舵机控制不可用：{e}")
-            #self.servo_ready = False
 
         self.servo_ctrl = None
         self.servo_ready = False
