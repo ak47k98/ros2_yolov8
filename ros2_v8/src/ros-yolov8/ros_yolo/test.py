@@ -53,7 +53,6 @@ class AIDetector(Node):
         self._init_publishers()
         self._init_threads()
 
-        self._init_publishers()
 
         # MODIFICATION: Initialize a list to store (hold) visualization targets
         self.visualization_targets = []
