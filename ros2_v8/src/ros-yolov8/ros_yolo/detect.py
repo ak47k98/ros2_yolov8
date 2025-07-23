@@ -47,8 +47,8 @@ class AIDetector(Node):
                 ('camera_id', ''),
                 #('image_topic', 'raw_images'),
                 ('image_topic', 'image_topic'),  # 图像订阅话题
-                ('model_path1', '/home/ak47k98/PycharmProjects/ros2_v8/best_circle.pt'),
-                ('model_path2', '/home/ak47k98/PycharmProjects/ros2_v8/best_H.pt'),
+                ('model_path1', 'best_circle.pt'),
+                ('model_path2', 'best_H.pt'),
                 ('conf_threshold', 0.6),
                 ('device', 'cuda:0'),
                 ('frame_size', [1920, 1080]),
