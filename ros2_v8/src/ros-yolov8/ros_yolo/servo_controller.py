@@ -62,5 +62,5 @@ class ServoController:
         #time.sleep(delay)
 
         # 第三步：复位
-        self.set_servo(servo_id, 1800)
+        self.set_servo(servo_id, 1864)
         self.node.get_logger().info(f"Servo{servo_id} → 投弹完成")

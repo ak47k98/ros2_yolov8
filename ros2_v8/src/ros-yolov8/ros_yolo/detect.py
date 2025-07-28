@@ -89,7 +89,7 @@ class AIDetector(Node):
 
         # 圆心相关初始化
         self.center_1x, self.center_1y = 700, 450 # 1280,720
-        self.center_2x, self.center_2y = 620, 450
+        self.center_2x, self.center_2y = 610, 450
         self.radius = 35
         self.prev_state = 0
         self.stay_start_time = None
@@ -201,6 +201,8 @@ class AIDetector(Node):
             self.camera_matrix = calib_data['camera_matrix']
             self.dist_coeffs = calib_data['dist_coeffs']
             self.get_logger().info("成功加载相机标定参数")
+            self.get_logger().info(f"相机内参 fx: {self.camera_matrix[0, 0]}, fy: {self.camera_matrix[1, 1]}")
+            self.get_logger().info(f"相机畸变系数: {self.dist_coeffs}")
         except Exception as e:
             self.get_logger().error(f"加载标定参数失败: {str(e)}")
             self.camera_matrix = None
@@ -280,6 +282,7 @@ class AIDetector(Node):
             time.sleep(0.05)
 
     def _draw_detections(self, frame, results):
+        original_frame = frame.copy()
         cv2.circle(frame, (self.center_1x, self.center_1y), self.radius, (0, 255, 255), 2, cv2.LINE_AA)
         cv2.circle(frame, (self.center_2x, self.center_2y), self.radius, (0, 255, 255), 2, cv2.LINE_AA)
         det_arr = Detection2DArray()
@@ -289,7 +292,7 @@ class AIDetector(Node):
         circle_boxes = []
         stuffed_boxes = []
         h_boxes = []
-        idx = 0
+        #idx = 0
 
         for result in results:
             for box in result.boxes.cpu().numpy():
@@ -312,6 +315,52 @@ class AIDetector(Node):
                 color = (0, 255, 0)
                 if label_name == 'circle':
                     color = (255, 0, 0)
+
+
+                    # 直径估算逻辑
+                    try:
+                        if self.rangefinder_height is not None:
+                            # 相机参数
+                            fx = self.camera_matrix[0, 0]
+                            cx0 = 1280 // 2
+                            cy0 = 720 // 2
+                            height_m = self.rangefinder_height-0.1
+
+                            # 目标像素中心与宽高
+                            cx = (x1 + x2) // 2
+                            cy = (y1 + y2) // 2
+                            w = x2 - x1
+                            h = y2 - y1
+                            pixel_diameter = (w + h) / 2
+
+                            # 调用估算函数
+                            real_diameter = self.estimate_real_diameter_with_angle_correction(
+                                pixel_diameter, cx, cy, fx, cx0, cy0, height_m
+                            )
+                            real_diameter/=1.5
+
+
+                            # 分类目标 circle 类型
+                            if 0.125 <= real_diameter <= 0.175:
+                                type_str = "15cm"
+                            elif 0.175 <= real_diameter <= 0.225:
+                                type_str = "20cm"
+                            elif 0.225 <= real_diameter <= 0.275:
+                                type_str = "25cm"
+                            else:
+                                type_str = "未知"
+
+                            self.get_logger().info(
+                                f"[直径估算] ({cx},{cy}) d={real_diameter * 100:.1f}cm → {type_str}"
+                                f" | 高度: ({height_m+0.1})",
+                                throttle_duration_sec=1.0
+                            )
+                    except Exception as e:
+                        self.get_logger().warn(f"[直径估算] 跳过估算: {e}", throttle_duration_sec=1.0)
+
+
+
+
                 elif label_name == 'stuffed':
                     color = (0, 255, 255)
                 elif label_name == 'H':
@@ -319,14 +368,11 @@ class AIDetector(Node):
                 cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                 cv2.putText(frame, f"{label_name} {conf:.2f}", (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-                if label_name == 'circle':
-                    cv2.circle(frame, (cx, cy), 5, color, -1)
-                idx += 1
 
         if self.current_state == 3:
             idx = 0
-            for result in results:
-                for box in result.boxes.cpu().numpy():
+            for result in results:  # 遍历检测结果
+                for box in result.boxes.cpu().numpy():  # 遍历每个检测框
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
                     original_cls_id = int(box.cls[0])
                     label_name = result.names[original_cls_id]
@@ -340,16 +386,24 @@ class AIDetector(Node):
                         det2d = self.build_detection2d(cx, cy, w, h, unified_cls_id, conf, det_arr.header.stamp,
                                                     det_arr.header.frame_id)
                         det_arr.detections.append(det2d)
-                    if label_name in ['stuffed', 'circle']:
-                        roi = frame[y1:y2, x1:x2]
-                        if roi.size > 0:
-                            win = f'{label_name}_{idx}'
-                            resized_roi = cv2.resize(roi, (160, 160))
-                            cv2.imshow(win, resized_roi)
-                            cv2.moveWindow(win, 50 + idx * 180, 50)
-                            idx += 1
+
+
+                    if label_name == 'stuffed':
+                        roi = original_frame[y1:y2, x1:x2]
+                        if roi.size == 0:
+                            continue
+                        elif roi.size > 0:
+                            win = f'Stuffed_{idx}'
+                            resized_roi = cv2.resize(roi, (160, 160))   # 调整裁剪区域大小
+                            cv2.imshow(win, resized_roi)    # 显示裁剪区域
+                            cv2.moveWindow(win, 50 + idx * 180, 50) # 设置窗口位置
+                            idx += 1    # 增加索引以避免窗口名称冲突
+
+
             self.det2d_pub.publish(det_arr)
             return frame
+
+
 
         elif self.current_state == 4:
             det_list = []
@@ -380,7 +434,14 @@ class AIDetector(Node):
                 det2d = self.build_detection2d(cx, cy, w, h, cls_id, conf, det_arr.header.stamp,
                                             det_arr.header.frame_id)
                 det_arr.detections.append(det2d)
-
+            for area, x1, y1, x2, y2, cls_id, conf in stuffed_boxes:
+                cx = (x1 + x2) // 2
+                cy = (y1 + y2) // 2
+                w = x2 - x1
+                h = y2 - y1
+                det2d = self.build_detection2d(cx, cy, w, h, cls_id, conf, det_arr.header.stamp,
+                                            det_arr.header.frame_id)
+                det_arr.detections.append(det2d)
             if circle_boxes and (self.pause_until is None or time.time() >= self.pause_until):
                 target_center_x = (self.center_1x + self.center_2x) // 2
                 target_center_y = (self.center_1y + self.center_2y) // 2
@@ -608,6 +669,29 @@ class AIDetector(Node):
 
     def get_unified_class_id(self, label_name: str) -> int: # 根据标签名称获取统一类别ID，如果标签名称不存在，则返回-1
         return self.unified_class_mapping.get(label_name, -1)
+
+    def estimate_real_diameter_with_angle_correction(self, pixel_diameter, cx, cy, fx, cx0, cy0, height_m):
+        """
+        根据视角修正模型估算真实直径
+
+        参数:
+            pixel_diameter: 检测框像素直径（宽高均值）
+            cx, cy: 目标中心点坐标（像素）
+            fx: 相机焦距（像素）
+            cx0, cy0: 图像中心点（像素）
+            height_m: 高度（米）
+
+        返回:
+            估计出的目标直径（单位：米）
+        """
+        import math
+        r = math.sqrt((cx - cx0) ** 2 + (cy - cy0) ** 2)
+        theta = math.atan(r / fx)
+        cos_theta = math.cos(theta)
+        if cos_theta == 0:
+            return 0
+        return (pixel_diameter * height_m) / (fx * cos_theta)
+
 
 def main(args=None):
     rclpy.init(args=args)
