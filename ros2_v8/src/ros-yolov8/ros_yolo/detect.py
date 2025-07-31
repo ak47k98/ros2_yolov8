@@ -315,6 +315,7 @@ class AIDetector(Node):
                 color = (0, 255, 0)
                 if label_name == 'circle':
                     color = (255, 0, 0)
+                    #cv2.circle(frame, (cx, cy), 1, color, -1)
 
 
                     # 直径估算逻辑
