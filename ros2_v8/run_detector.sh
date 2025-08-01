@@ -3,7 +3,7 @@
 # 保存为 run_detector.sh，赋予执行权限后使用
 
 # 项目根目录（根据实际情况调整）
-PROJECT_DIR="/home/wynter/wynter/ros2_yolov8/ros2_v8"
+PROJECT_DIR="/home/ak47k98/PycharmProjects/ros2_v8"
 
 # RTSP地址参数（可根据需要修改）
 RTSP_URL="rtsp://192.168.144.25:8554/main.264"
@@ -16,12 +16,6 @@ echo -e "\n=== 初始化Conda环境 ==="
 source ~/anaconda3/etc/profile.d/conda.sh
 echo -e "\n=== 激活yolov8_10环境 ==="
 conda activate yolov8_10 || { echo "环境激活失败！"; exit 1; }
-
-# 添加PYTHONPATH环境变量设置
-echo -e "\n=== 设置Python路径 ==="
-export PYTHONPATH=$PYTHONPATH:/home/wynter/anaconda3/envs/yolov8_10/lib/python3.10/site-packages
-echo "已添加Python路径: /home/wynter/anaconda3/envs/yolov8_10/lib/python3.10/site-packages"
-
 
 echo -e "\n=== 设置ROS2工作区 ==="
 source install/setup.bash || { echo "工作区设置失败！"; exit 1; }

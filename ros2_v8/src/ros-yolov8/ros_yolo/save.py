@@ -12,7 +12,7 @@ class ImageSaver(Node):
         super().__init__('image_saver')
 
         # 保存目录
-        self.save_dir = '/home/wynter/wynter/ros2_yolov8/ros2_v8/saved_images'
+        self.save_dir = '/home/ak47k98/PycharmProjects/ros2_v8/saved_images'
         os.makedirs(self.save_dir, exist_ok=True)
 
         self.bridge = CvBridge()
