@@ -369,7 +369,7 @@ class AIDetector(Node):
                                 type_str = "15cm"
                             elif 0.175 <= real_diameter <= 0.225:
                                 type_str = "20cm"
-                            elif 0.225 <= real_diameter <= 0.325:
+                            elif 0.225 <= real_diameter <= 0.275:
                                 type_str = "25cm"
                             else:
                                 type_str = "未知"

@@ -1,0 +1,5 @@
+  File "/home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/detect.py", line 191
+    self.get_logger(real_diameter/=1.5).warn(f"MAVROS 未启动，舵机控制不可用：{e}")
+                                 ^^
+SyntaxError: invalid syntax
+

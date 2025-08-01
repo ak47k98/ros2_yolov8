@@ -1,0 +1,13 @@
+[console_scripts]
+capturer = ros_yolo.camera_capture_function:main
+detector = ros_yolo.detect:main
+detector1 = ros_yolo.target_detect_function:main
+detector_text = ros_yolo.detect_text:main
+nub = ros_yolo.number:main
+pub = ros_yolo.pub_id:main
+record = ros_yolo.record:main
+save = ros_yolo.save:main
+std = ros_yolo.text_pub_msg:main
+test_servo_node = ros_yolo.test_servo_node:main
+text_pub = ros_yolo.text_pub:main
+

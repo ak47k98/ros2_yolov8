@@ -1,0 +1,89 @@
+[0.273s] Invoking command in '/home/wynter/wynter/ros2_yolov8/ros2_v8/src/ros-yolov8': PYTHONPATH=/home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ros_yolo build --build-base /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build install --record /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/install.log --single-version-externally-managed install_data
+[0.384s] running egg_info
+[0.384s] creating ../../build/ros_yolo/ros_yolo.egg-info
+[0.384s] writing ../../build/ros_yolo/ros_yolo.egg-info/PKG-INFO
+[0.384s] writing dependency_links to ../../build/ros_yolo/ros_yolo.egg-info/dependency_links.txt
+[0.385s] writing entry points to ../../build/ros_yolo/ros_yolo.egg-info/entry_points.txt
+[0.385s] writing requirements to ../../build/ros_yolo/ros_yolo.egg-info/requires.txt
+[0.385s] writing top-level names to ../../build/ros_yolo/ros_yolo.egg-info/top_level.txt
+[0.385s] writing manifest file '../../build/ros_yolo/ros_yolo.egg-info/SOURCES.txt'
+[0.385s] reading manifest file '../../build/ros_yolo/ros_yolo.egg-info/SOURCES.txt'
+[0.386s] adding license file 'LICENSE'
+[0.386s] writing manifest file '../../build/ros_yolo/ros_yolo.egg-info/SOURCES.txt'
+[0.386s] running build
+[0.386s] running build_py
+[0.386s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build
+[0.386s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib
+[0.386s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/save.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/camera_capture_function.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/text_pub.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/pub_id.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/detect_text.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/servo_controller.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.386s] copying ros_yolo/target_detect_function.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/__init__.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/detect.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/text_pub_msg.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/test_servo_node.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/test.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/record.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] copying ros_yolo/number.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo
+[0.387s] running install
+[0.387s] running install_lib
+[0.387s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/save.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/camera_capture_function.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/text_pub.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/pub_id.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/detect_text.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/servo_controller.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/target_detect_function.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.387s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/__init__.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/detect.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/text_pub_msg.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/test_servo_node.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/test.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/record.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] copying /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build/lib/ros_yolo/number.py -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo
+[0.388s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/save.py to save.cpython-310.pyc
+[0.388s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/camera_capture_function.py to camera_capture_function.cpython-310.pyc
+[0.388s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/text_pub.py to text_pub.cpython-310.pyc
+[0.388s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/pub_id.py to pub_id.cpython-310.pyc
+[0.388s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/detect_text.py to detect_text.cpython-310.pyc
+[0.391s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/servo_controller.py to servo_controller.cpython-310.pyc
+[0.391s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/target_detect_function.py to target_detect_function.cpython-310.pyc
+[0.391s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/__init__.py to __init__.cpython-310.pyc
+[0.391s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/detect.py to detect.cpython-310.pyc
+[0.392s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/text_pub_msg.py to text_pub_msg.cpython-310.pyc
+[0.392s]   File "/home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/detect.py", line 191
+[0.392s]     self.get_logger(real_diameter/=1.5).warn(f"MAVROS 未启动，舵机控制不可用：{e}")
+[0.392s]                                  ^^
+[0.392s] SyntaxError: invalid syntax
+[0.392s] 
+[0.392s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/test_servo_node.py to test_servo_node.cpython-310.pyc
+[0.392s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/test.py to test.cpython-310.pyc
+[0.394s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/record.py to record.cpython-310.pyc
+[0.394s] byte-compiling /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo/number.py to number.cpython-310.pyc
+[0.394s] running install_data
+[0.395s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/share/ament_index
+[0.395s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/share/ament_index/resource_index
+[0.395s] creating /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/share/ament_index/resource_index/packages
+[0.395s] copying resource/ros_yolo -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/share/ament_index/resource_index/packages
+[0.395s] copying package.xml -> /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/share/ros_yolo
+[0.395s] running install_egg_info
+[0.396s] Copying ../../build/ros_yolo/ros_yolo.egg-info to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages/ros_yolo-0.0.0-py3.10.egg-info
+[0.396s] running install_scripts
+[0.405s] Installing capturer script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing detector script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing detector1 script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing detector_text script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing nub script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing pub script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing record script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing save script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing std script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing test_servo_node script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] Installing text_pub script to /home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/ros_yolo
+[0.405s] writing list of installed files to '/home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/install.log'
+[0.415s] Invoked command in '/home/wynter/wynter/ros2_yolov8/ros2_v8/src/ros-yolov8' returned '0': PYTHONPATH=/home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wynter/wynter/ros2_yolov8/ros2_v8/install/ros_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ros_yolo build --build-base /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/build install --record /home/wynter/wynter/ros2_yolov8/ros2_v8/build/ros_yolo/install.log --single-version-externally-managed install_data
