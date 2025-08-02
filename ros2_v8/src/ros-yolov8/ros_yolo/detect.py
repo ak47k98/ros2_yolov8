@@ -33,6 +33,15 @@ from vision_msgs.msg import Detection2DArray, Detection2D, BoundingBox2D, Object
 from geometry_msgs.msg import Point
 from std_msgs.msg import Header
 from visualization_msgs.msg import MarkerArray, Marker
+import torch
+
+try:
+    torch.multiprocessing.set_start_method('fork', force=True)
+    print("PyTorch multiprocessing start method has been set to 'fork'.")
+except RuntimeError:
+    # 如果启动方法已经被设置，会抛出RuntimeError，可以安全地忽略
+    print("PyTorch multiprocessing start method was already set.")
+
 
 class AIDetector(Node):
     """智能检测节点（摄像头/RTSP/RTMP/ROS话题自动切换，统一处理流程）"""
@@ -65,8 +74,8 @@ class AIDetector(Node):
         self.image_sub = None
         self.running = False
         self.cap_thread = None
-        self.proc_thread = None
-        self.latest_frame = None
+        #self.proc_thread = None
+        #self.latest_frame = None
         self.frame_lock = threading.Lock()
 
 
@@ -189,6 +198,9 @@ class AIDetector(Node):
             self.model2 = YOLO(model_path2).to(device)
             self.model1.fuse()
             self.model2.fuse()
+            self.get_logger().info("Converting fused models to FP16...")
+            self.model1.half()
+            self.model2.half()
             self.get_logger().info(f"已加载模型1: {model_path1} → {device}")
             self.get_logger().info(f"已加载模型2: {model_path2} → {device}")
         except Exception as e:
@@ -292,7 +304,6 @@ class AIDetector(Node):
         circle_boxes = []
         stuffed_boxes = []
         h_boxes = []
-        #idx = 0
 
         for result in results:
             for box in result.boxes.cpu().numpy():
