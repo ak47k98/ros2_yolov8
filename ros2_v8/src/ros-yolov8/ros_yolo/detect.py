@@ -363,11 +363,19 @@ class AIDetector(Node):
                     color = (255, 0, 0)
                     try:
                         if self.rangefinder_height is not None:
-                            # 相机参数
-                            fx = self.camera_matrix[0, 0]
-                            cx0 = 1280 // 2
-                            cy0 = 720 // 2
-                            height_m = self.rangefinder_height-0.1
+                            # 标定分辨率
+                            calib_w, calib_h = 640, 640
+                            # 实际分辨率
+                            img_w, img_h = 1280, 720
+
+                            # 计算缩放比例
+                            scale_x = img_w / calib_w
+                            scale_y = img_h / calib_h
+
+                            # 修正相机内参（只需一次，建议在加载标定参数后做）
+                            fx = self.camera_matrix[0, 0] * scale_x
+                            cx0 = self.camera_matrix[0, 2] * scale_x
+                            cy0 = self.camera_matrix[1, 2] * scale_y
 
                             # 目标像素中心与宽高
                             cx = (x1 + x2) // 2
@@ -375,29 +383,31 @@ class AIDetector(Node):
                             w = x2 - x1
                             h = y2 - y1
                             pixel_diameter = (w + h) / 2
-
+                            # 高度修正
+                            height_m = self.rangefinder_height-0.1
                             # 调用估算函数
                             real_diameter = self.estimate_real_diameter_with_angle_correction(
                                 pixel_diameter, cx, cy, fx, cx0, cy0, height_m
                             )
-                            real_diameter/=1.5
-
 
                             # 分类目标 circle 类型
+                            
                             if 0.125 <= real_diameter <= 0.175:
                                 type_str = "15cm"
                             elif 0.175 <= real_diameter <= 0.225:
                                 type_str = "20cm"
-                            elif 0.225 <= real_diameter <= 0.275:
+                            elif 0.225 <= real_diameter <= 0.325:
                                 type_str = "25cm"
                             else:
                                 type_str = "未知"
+
 
                             self.get_logger().info(
                                 f"[直径估算] ({cx},{cy}) d={real_diameter * 100:.1f}cm → {type_str}"
                                 f" | 高度: ({height_m+0.1})",
                                 throttle_duration_sec=1.0
                             )
+
                     except Exception as e:
                         self.get_logger().warn(f"[直径估算] 跳过估算: {e}", throttle_duration_sec=1.0)
 
