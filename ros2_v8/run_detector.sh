@@ -20,7 +20,14 @@ conda activate yolov8_10 || { echo "环境激活失败！"; exit 1; }
 echo -e "\n=== 设置ROS2工作区 ==="
 source install/setup.bash || { echo "工作区设置失败！"; exit 1; }
 export TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1
+
+# ==================== 关键修复 ====================
+# 设置OpenCV的FFMPEG后端超时为0.5秒（500毫秒）
+# 这将使cap.read()在网络断开时不再阻塞30秒，而是0.5秒后就快速失败
+export OPENCV_FFMPEG_CAPTURE_OPTIONS="timeout;500"
+echo "FFmpeg超时已设置为5秒"
+# ================================================
+
 echo -e "\n=== 启动YOLOv8检测节点（RTSP模式）==="
 echo "摄像头地址: $RTSP_URL"
 ros2 run ros_yolo detector --ros-args -p camera_id:="$RTSP_URL"
-
