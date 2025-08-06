@@ -46,7 +46,7 @@ except RuntimeError:
 
 # ==================== 新增：健壮的视频流处理器 ====================
 class RobustStreamer:
-    """一个独立的、带自动重连功能的视频流处理器"""
+
 
     def __init__(self, stream_url, logger, max_queue_size=1):
         self.stream_url = stream_url
@@ -231,7 +231,7 @@ class AIDetector(Node):
     # 移除了旧的 _init_threads 和 _capture_loop 方法
     # _process_frame 及其后续所有方法保持不变
 
-    # ... 您所有的其他方法 (_init_model, _process_frame, _draw_detections, etc.) 保持原样 ...
+
     def _try_init_servo_controller(self):
         try:
             self.servo_ctrl = ServoController(self, namespace="/mavros/")
@@ -442,7 +442,7 @@ class AIDetector(Node):
                         det_arr.detections.append(det2d)
 
 
-                    if label_name == 'stuffed':
+                    if label_name != 'H':
                         roi = original_frame[y1:y2, x1:x2]
                         if roi.size == 0:
                             continue
@@ -625,7 +625,7 @@ class AIDetector(Node):
         super().destroy_node()
         self.get_logger().info("节点已成功销毁。")
 
-    # ... 您其余的所有辅助函数 (_visualization_callback, _range_callback, etc.) 保持不变 ...
+
     def _visualization_callback(self, msg: MarkerArray):
         new_targets = []    # 创建一个新的目标列表
         for marker in msg.markers:
@@ -712,11 +712,9 @@ class AIDetector(Node):
         if self.current_state == 4:
             # 如果在状态doland下，启用H的记忆
             self.h_detection_active = True
-            self.last_h_detected_in_doland = None
         else:
             self.h_detection_active = False
-            self.last_h_detected_in_doland = None
-
+            #self.last_h_detected_in_doland = None
     def _init_class_mapping(self):
         self.unified_class_mapping = {
             'circle': 0,
