@@ -181,6 +181,7 @@ class AIDetector(Node):
 
         # ========== 启动输入源处理 ==========
         self._start_input_source()
+        self.current3_time=None
 
     def _start_input_source(self):
         """根据配置选择并启动视频源"""
@@ -450,7 +451,7 @@ class AIDetector(Node):
                             win = f'Stuffed_{idx}'
                             resized_roi = cv2.resize(roi, (160, 160))   # 调整裁剪区域大小
                             cv2.imshow(win, resized_roi)    # 显示裁剪区域
-                            cv2.moveWindow(win, 50 + idx * 180, 50) # 设置窗口位置
+                            cv2.moveWindow(win, 150 + idx * 180, 50) # 设置窗口位置
                             idx += 1    # 增加索引以避免窗口名称冲突
 
 
@@ -460,6 +461,27 @@ class AIDetector(Node):
 
 
         elif self.current_state == 4:
+            if self.current3_time >= time.time() - 2.0 and self.current3_time is not None :
+                idx = 0
+                for result in results:
+                    for box in result.boxes.cpu().numpy():  # 遍历每个检测框
+                        x1, y1, x2, y2 = map(int, box.xyxy[0])
+                        original_cls_id = int(box.cls[0])
+                        label_name = result.names[original_cls_id]
+                        unified_cls_id = self.get_unified_class_id(label_name)
+                        conf = float(box.conf[0])
+                        if label_name == 'stuffed':
+                            roi = original_frame[y1:y2, x1:x2]
+                            if roi.size == 0:
+                                continue
+                            elif roi.size > 0:
+                                win = f'Stuffed_{idx}'
+                                resized_roi = cv2.resize(roi, (160, 160))  # 调整裁剪区域大小
+                                cv2.imshow(win, resized_roi)  # 显示裁剪区域
+                                cv2.moveWindow(win, 150 + idx * 180, 50)  # 设置窗口位置
+                                idx += 1  # 增加索引以避免窗口名称冲突
+
+
             det_list = []
             if h_boxes:
                 _, x1, y1, x2, y2, cls_id, conf = max(h_boxes, key=lambda b: b[0])
@@ -706,7 +728,9 @@ class AIDetector(Node):
         self.current_state = msg.data
         if self.current_state != self.prev_state:
             # 如果状态发生变化，记录日志
-            self.get_logger().info(f"接收到状态更新: {self.current_state}", throttle_duration_sec=2.0)
+            self.get_logger().info(f"接收到状态更新: {self.current_state}", throttle_duration_sec=1.0)
+            if self.prev_state==3 and self.current_state==4:
+                self.current3_time = time.time()
             self.prev_state = self.current_state
 
         if self.current_state == 4:
