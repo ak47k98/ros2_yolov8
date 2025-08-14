@@ -181,7 +181,7 @@ class AIDetector(Node):
 
         # ========== 启动输入源处理 ==========
         self._start_input_source()
-        self.current3_time=None
+        self.current3_time=time.time()
 
     def _start_input_source(self):
         """根据配置选择并启动视频源"""
@@ -461,7 +461,8 @@ class AIDetector(Node):
 
 
         elif self.current_state == 4:
-            if self.current3_time >= time.time() - 2.0 and self.current3_time is not None :
+            nowtime = float(time.time())
+            if self.current3_time >= nowtime - 3.0 and self.current3_time is not None :
                 idx = 0
                 for result in results:
                     for box in result.boxes.cpu().numpy():  # 遍历每个检测框
@@ -730,7 +731,7 @@ class AIDetector(Node):
             # 如果状态发生变化，记录日志
             self.get_logger().info(f"接收到状态更新: {self.current_state}", throttle_duration_sec=1.0)
             if self.prev_state==3 and self.current_state==4:
-                self.current3_time = time.time()
+                self.current3_time = float(time.time())
             self.prev_state = self.current_state
 
         if self.current_state == 4:
