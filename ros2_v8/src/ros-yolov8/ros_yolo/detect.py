@@ -145,8 +145,12 @@ class AIDetector(Node):
         self.visualization_subscriber = self.create_subscription(
             MarkerArray, 'visualization_targets', self._visualization_callback, 10
         )
-        self.center_1x, self.center_1y = 700, 450
-        self.center_2x, self.center_2y = 610, 450
+
+
+        self.flagfire  = False
+
+        self.center_1x, self.center_1y = 700, 460
+        self.center_2x, self.center_2y = 610, 460
         self.radius = 35
         self.prev_state = 0
         self.stay_start_time = None
@@ -550,7 +554,7 @@ class AIDetector(Node):
                         self.rangefinder_height <= 1.6
                     )
                     current_time = time.time()
-                    if in_target_area and self.current_state == 0 and altitude_ok and self.last_servo_value != 3:
+                    if in_target_area and self.current_state == 0 and altitude_ok and self.last_servo_value != 3 and self.flagfire == True :
                         if self.stay_start_time is None:
                             self.stay_start_time = current_time
                             self.get_logger().info("开始计时：目标在圆内，且高度满足")
