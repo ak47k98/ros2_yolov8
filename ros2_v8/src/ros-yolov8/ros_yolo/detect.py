@@ -149,8 +149,8 @@ class AIDetector(Node):
 
         self.flagfire  = False
 
-        self.center_1x, self.center_1y = 700, 460
-        self.center_2x, self.center_2y = 610, 460
+        self.center_1x, self.center_1y = 710, 520   #right
+        self.center_2x, self.center_2y = 614, 522   #left
         self.radius = 35
         self.prev_state = 0
         self.stay_start_time = None
