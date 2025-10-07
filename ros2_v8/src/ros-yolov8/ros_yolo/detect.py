@@ -138,7 +138,7 @@ class AIDetector(Node):
         # ========== 模型初始化 ==========
         self._init_model()
 
-        # ... (您其余的初始化代码保持不变) ...
+
         self._init_class_mapping()
         self._init_publishers()
         self.visualization_targets = []
@@ -182,7 +182,7 @@ class AIDetector(Node):
         )
         threading.Thread(target=self._try_init_servo_controller, daemon=True).start()
         # =================================================
-
+        self.modelsavingflag = True
         # ========== 启动输入源处理 ==========
         self._start_input_source()
         self.current3_time=time.time()
@@ -292,9 +292,30 @@ class AIDetector(Node):
         if self.camera_matrix is not None and self.dist_coeffs is not None and self.map1 is not None:
             frame = cv2.remap(frame, self.map1, self.map2, interpolation=cv2.INTER_LINEAR)
         conf_thres = self.get_parameter('conf_threshold').value
+        
+        
+        
+        
+        
         try:
-            results1 = self.model1.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
-            results2 = self.model2.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+            if self.modelsavingflag:
+                if  self.current_state == 0 :
+                    results1 = self.model1.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+                    results2 =[]
+                elif self.current_state == 4 :
+                    results2 = self.model2.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+                    results1 =[]
+                else :
+                    results1 = self.model1.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+                    results2 = self.model2.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+
+            else :
+                results1 = self.model1.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+                results2 = self.model2.predict(source=frame, conf=conf_thres, verbose=False, stream=False)
+
+
+
+
             combined_results = results1 + results2
 
             detected_coords = []
