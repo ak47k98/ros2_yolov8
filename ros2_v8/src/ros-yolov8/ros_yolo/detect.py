@@ -44,7 +44,7 @@ except RuntimeError:
     print("PyTorch multiprocessing start method was already set.")
 
 
-# ==================== 新增：健壮的视频流处理器 ====================
+
 class RobustStreamer:
 
 
@@ -116,8 +116,8 @@ class AIDetector(Node):
             parameters=[
                 ('camera_id', ''),
                 ('image_topic', 'image_topic'),
-                ('model_path1', 'best_circle.pt'),
-                ('model_path2', 'best_H.pt'),
+                ('model_path1', 'best_circle-s.pt'),
+                ('model_path2', 'best_H-s.pt'),
                 ('conf_threshold', 0.6),
                 ('device', 'cuda:0'),
                 ('frame_size', [1920, 1080]),
@@ -149,8 +149,8 @@ class AIDetector(Node):
 
         self.flagfire  = False
 
-        self.center_1x, self.center_1y = 710, 520   #right
-        self.center_2x, self.center_2y = 614, 522   #left
+        self.center_1x, self.center_1y = 665, 470   #right
+        self.center_2x, self.center_2y = 615, 470   #left
         self.radius = 35
         self.prev_state = 0
         self.stay_start_time = None
